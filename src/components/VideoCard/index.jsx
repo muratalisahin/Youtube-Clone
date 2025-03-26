@@ -1,43 +1,27 @@
-import React from 'react';
 import millify from "millify";
-import moment from "moment";
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import "moment/locale/tr";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
-// Türkçe dilini global olarak ayarlıyoruz
-moment.locale("tr");
 
-const VideoCard = ({ data }) => {
-  //Video resmini belirleyeçek state
+const VideoCard = ({ video, isRow }) => {
+  // Video resmini belirleyecek state
   const [isHover, setIsHover] = useState(false);
 
-  // Zaman formatlama
-  const formattedTime = data?.publishedAt
-    ? moment(data.publishedAt).format("LLLL") // "LLLL" Türkçe formatta tam tarih/saat verir
-    : "Bilinmeyen Tarih";
+  // Video tarihi için değerler
 
-  // Eüer video üzerine hover olunduysa vs movingThumbnails varsa bunu yoksa veya hover olunmadıysa thumbnail render et
-  const thumbnail = isHover && data?.richThumbnail?.length > 0
-    ? data.richThumbnail[data.richThumbnail.length - 1].url
-    : (data?.thumbnail?.length > 0
-      ? data.thumbnail[data.thumbnail.length - 1].url
-      : '');
+  // Eğer video üzerine hover olunduysa ve movingThumbnails varsa bunu yoksa veya hover olunmadıysa thumbnail i render et
+  const thumbnail =
+    isHover && video.richThumbnail
+      ? video.richThumbnail[video.richThumbnail.length - 1].url
+      : video.thumbnail[video.thumbnail.length - 1].url;
+      console.log(video,"video");
+      
 
-  // Moving thumbnails tanımı (daha güvenli bir kontrol)
-  const movingThumbnails = data?.richThumbnail?.length > 0
-    ? data.richThumbnail[data.richThumbnail.length - 1]
-    : null;
-
-  // Test için çıktılar (production'da kaldırılabilir)
-  console.log("Thumbnail:", thumbnail);
-  console.log("Moving Thumbnails:", movingThumbnails);
-  console.log("Video Data:", data);
-// Video kart üzerine hover olunma durumuna bağlı olarak isHover stateni güncelle
   return (
+    // Video kart üzerine hover olunma durumuna bağlı olarak isHover state'ini güncelle
     <Link
-      to={`/watch?v=${data.videoId}`}
-      className="cursor-pointer"
+      to={`/watch?v=${video.videoId}`}
+      className={`cursor-pointer ${isRow&&"row"} `}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
@@ -45,35 +29,37 @@ const VideoCard = ({ data }) => {
       <div>
         <img
           className="rounded-lg w-full h-full"
-          src={thumbnail || 'https://via.placeholder.com/150'} // Varsayılan bir resim ekledim
-          alt="video-resmi"
+          src={thumbnail}
+          alt="video-image"
         />
       </div>
+
       {/* Alt Detay Alanı */}
-      <div className="mt-4 flex gap-4">
+      <div className={`${!isRow && "mt-4"}  flex gap-4`}>
         <img
-          src={data?.channelThumbnail?.[0]?.url || 'https://via.placeholder.com/56'} // Varsayılan bir kanal resmi
-          className="size-14 rounded-full"
-          alt="kanal-resmi"
+          src={video.channelThumbnail[0].url}
+          className="size-14 rounded-full pp"
+          alt="chanel-pic"
         />
         <div>
-          <h4 className="font-bold line-clamp-2">{data?.title || "Başlık Yok"}</h4>
-          <p>{data?.channelTitle || "Kanal Bilinmiyor"}</p>
+          <h4 className="font-bold line-clamp-2">{video.title} </h4>
+          <p className="chanel-title">{video.channelTitle}</p>
 
           <div className="flex gap-3 items-center mt-2">
-            {data?.viewCount && (
+            {video.viewCount && (
               <p className="fw-bold">
-                <span>{millify(data.viewCount)}</span>
-                <span className="pe-3"> Görüntülenme</span>
+                <span>{millify(video.viewCount)} </span>
+                {!isRow && <span className="pe-3 ">Görüntülenme</span>} *
               </p>
             )}
-            <p>
-              {data?.isLive ? (
-                <span className="bg-red-500 py-0.5 px-2 rounded-lg">Canlı</span>
-              ) : (
-                <span>{data?.publishedTimeText || formattedTime}</span>
-              )}
-            </p>
+
+            {video.isLive ? (
+              <p className="bg-red-500 py-0.5 px-2 rounded-lg">Canlı</p>
+            ) : (
+              <p>
+                <span>{video.publishedTimeText}</span>
+              </p>
+            )}
           </div>
         </div>
       </div>

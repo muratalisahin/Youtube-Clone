@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import api from "../../utils/api";
 import { useState } from "react";
 import VideoCard from "../../components/VideoCard";
+import { SkeletonLoader } from "../../components/Loader";
+import Error from "../../components/Error";
 
 const Feed = () => {
   // State kurulumları
@@ -37,13 +39,13 @@ const Feed = () => {
       <Sidebar selectedCat={selectedCat} />
       <div className="videos">
         {isLoading ? (
-          <h1>Yükleniyor</h1>
+         <SkeletonLoader/>
         ) : error ? (
-          <h1>Hataaa</h1>
+          <Error/>
         ) : (
           videos?.map(
             (video, key) =>
-              video.type === "video" && <VideoCard key={key} data={video} />
+              video.type === "video" && <VideoCard key={key} video={video} />
           )
         )}
       </div>

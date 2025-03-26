@@ -6,5 +6,7 @@
 - react-router
 - react-player
 - tailwind
+<br><br>
 
-# sorunluyoutubeclone
+<video controls src="clone-gif-1.mp4" title="Title"></video>
+# Youtube-Clone
